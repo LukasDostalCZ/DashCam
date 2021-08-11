@@ -10,7 +10,8 @@
         android:id="@+id/recordVideoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:srcCompat="@drawable/record"
-        tools:layout_editor_absoluteX="334dp"
-        tools:layout_editor_absoluteY="343dp" />
+        tools:layout_editor_absoluteX="341dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
