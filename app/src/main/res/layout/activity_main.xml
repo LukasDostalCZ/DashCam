@@ -8,11 +8,12 @@
 
     <ImageButton
         android:id="@+id/recordVideoButton"
-        android:contentDescription="@string/record_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
+        android:contentDescription="@string/record_button"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:srcCompat="@drawable/record"
-        tools:layout_editor_absoluteX="341dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/record" />
 </androidx.constraintlayout.widget.ConstraintLayout>
