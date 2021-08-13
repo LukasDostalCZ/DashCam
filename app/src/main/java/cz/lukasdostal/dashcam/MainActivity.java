@@ -10,6 +10,8 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Toast;
@@ -62,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private HandlerThread mBackgroundHandlerThread;
+    private Handler mBackgroundHandler;
     private String mCameraId;
 
 
@@ -77,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        startBackgroundThread();
+
         if(preview.isAvailable()) {
             setupCamera(preview.getWidth(), preview.getHeight());
         } else {
@@ -86,8 +92,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        super.onPause();
         closeCamera();
+
+        stopBackgroundThread();
+
+        super.onPause();
     }
 
     @Override
@@ -122,6 +131,22 @@ public class MainActivity extends AppCompatActivity {
             mCameraDevice.close();
             mCameraDevice = null;
 
+        }
+    }
+    private void startBackgroundThread() {
+        mBackgroundHandlerThread = new HandlerThread("DashCam");
+        mBackgroundHandlerThread.start();
+        mBackgroundHandlerThread = new Handler(mBackgroundHandlerThread.getLooper());
+    }
+
+    private void stopBackgroundThread() {
+        mBackgroundHandlerThread.quitSafely();
+        try {
+            mBackgroundHandlerThread.join();
+            mBackgroundHandlerThread = null;
+            mBackgroundHandler = null;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
