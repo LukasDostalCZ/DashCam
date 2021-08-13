@@ -3,8 +3,12 @@ package cz.lukasdostal.dashcam;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.graphics.SurfaceTexture;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.view.TextureView;
 import android.view.View;
@@ -58,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private String mCameraId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +100,23 @@ public class MainActivity extends AppCompatActivity {
             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
     }
+
+    private void setupCamera(int width, int height) {
+        CameraManager cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+        try {
+            for (String cameraId : cameraManager.getCameraIdList()){
+                CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraId);
+                if(cameraCharacteristics.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT){
+                    continue;
+                }
+                mCameraId = cameraId;
+                return;
+            };
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void closeCamera() {
         if (mCameraDevice != null) {
             mCameraDevice.close();
