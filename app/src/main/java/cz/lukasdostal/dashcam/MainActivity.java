@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
+            Toast.makeText(getApplicationContext(), "TextureView size is changed", Toast.LENGTH_SHORT).show();
 
         }
 
