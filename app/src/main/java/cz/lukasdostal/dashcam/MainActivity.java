@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onOpened(@NonNull CameraDevice cameraDevice) {
             mCameraDevice = cameraDevice;
+            Toast.makeText(getApplicationContext(), "fotoaparát připojen", Toast.LENGTH_SHORT).show();
         }
 
         @Override
