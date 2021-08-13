@@ -20,7 +20,11 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -182,5 +186,18 @@ public class MainActivity extends AppCompatActivity {
         int sensorOrientation = cameraCharacteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
         deviceOrientation = ORIENTATIONS.get(deviceOrientation);
         return (sensorOrientation + deviceOrientation + 360) % 360;
+    }
+    private static Size chooseOptimalSize(Size[] choices, int widht, int height) {
+        List<Size> bigEnough = new ArrayList<Size>();
+        for(Size option : choices) {
+            if(option.getHeight() == option.getWidth() * height / widht && option.getWidth() >= widht && option.getHeight() >= height) {
+                bigEnough.add(option);
+            }
+        }
+        if(bigEnough.size() > 0) {
+            return Collections.min(bigEnough, new CompareSizeByArea());
+        } else {
+            return choices[0];
+        }
     }
 }
