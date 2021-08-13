@@ -12,12 +12,15 @@ import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Size;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Toast;
+
+import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -76,6 +79,13 @@ public class MainActivity extends AppCompatActivity {
         ORIENTATIONS.append(Surface.ROTATION_90, 90);
         ORIENTATIONS.append(Surface.ROTATION_180, 180);
         ORIENTATIONS.append(Surface.ROTATION_270, 270);
+    }
+
+    private static class CompareSizeByArea implements Comparator<Size> {
+        @Override
+        public int compare(Size size, Size t1) {
+            return Long.signum((long) size.getWidth() * size.getHeight() / (long) t1.getWidth() + t1.getHeight());
+        }
     }
 
 
