@@ -42,6 +42,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(preview.isAvailable()) {
+
+        } else {
+            preview.setSurfaceTextureListener(mSurfaceTextureListener);
+        }
+    }
+    @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         View decorView = getWindow().getDecorView();
