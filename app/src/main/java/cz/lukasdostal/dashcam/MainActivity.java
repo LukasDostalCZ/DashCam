@@ -128,6 +128,15 @@ public class MainActivity extends AppCompatActivity {
                 if(cameraCharacteristics.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT){
                     continue;
                 }
+                int deviceOrientation = getWindowManager().getDefaultDisplay().getRotation();
+                int totalRotation = sensorToDeviceRotation(cameraCharacteristics, deviceOrientation);
+                boolean swapRotation = totalRotation == 90 || totalRotation == 270;
+                int rotatedWidht = width;
+                int rotatedHeight = height;
+                if(swapRotation) {
+                    rotatedWidht = height;
+                    rotatedHeight = width;
+                }
                 mCameraId = cameraId;
                 return;
             };
