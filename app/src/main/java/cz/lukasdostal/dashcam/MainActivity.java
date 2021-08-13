@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
             setupCamera(i, i1);
+            connectCamera();
 
         }
 
@@ -116,10 +117,22 @@ public class MainActivity extends AppCompatActivity {
 
         if(preview.isAvailable()) {
             setupCamera(preview.getWidth(), preview.getHeight());
+            connectCamera();
         } else {
             preview.setSurfaceTextureListener(mSurfaceTextureListener);
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == REQEST_CAMERA_PERMISSION_RESULT) {
+            if(grantResults[0] != PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(getApplicationContext(), "Aplikace Dashcam potřebuje služby fotoaparátu", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
     @Override
     protected void onPause() {
