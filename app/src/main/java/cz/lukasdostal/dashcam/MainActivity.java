@@ -7,6 +7,7 @@ import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.view.TextureView;
 import android.view.View;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     private TextureView.SurfaceTextureListener mSurfaceTextureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
+            Toast.makeText(getApplicationContext(), "TextureView is available", Toast.LENGTH_SHORT).show();
 
         }
 
