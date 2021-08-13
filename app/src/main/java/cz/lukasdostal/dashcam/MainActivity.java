@@ -9,9 +9,11 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,6 +28,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onOpened(@NonNull CameraDevice cameraDevice) {
             mCameraDevice = cameraDevice;
+            startPreview();
             Toast.makeText(getApplicationContext(), "fotoaparát připojen", Toast.LENGTH_SHORT).show();
         }
 
@@ -86,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
     private Handler mBackgroundHandler;
     private String mCameraId;
     private Size mPreviewSize;
+    private CaptureRequest.Builder mCaptureRequestBuilder;
     private static SparseIntArray ORIENTATIONS = new SparseIntArray();
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 0);
@@ -198,6 +203,38 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 cameraManager.openCamera(mCameraId, mCameraDeviceStateCallback, mBackgroundHandler);
             }
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void startPreview() {
+        SurfaceTexture surfaceTexture = preview.getSurfaceTexture();
+        surfaceTexture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
+        Surface previewSurface = new Surface(surfaceTexture);
+
+        try {
+            mCaptureRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+            mCaptureRequestBuilder.addTarget(previewSurface);
+
+            mCameraDevice.createCaptureSession(Arrays.asList(previewSurface),
+                    new CameraCaptureSession.StateCallback() {
+                        @Override
+                        public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
+                            try {
+                                cameraCaptureSession.setRepeatingRequest(mCaptureRequestBuilder.build(),
+                                        null, mBackgroundHandler);
+                            } catch (CameraAccessException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
+                            Toast.makeText(getApplicationContext(), "nelze zobrazit náhled fotoaparátu", Toast.LENGTH_SHORT).show();
+
+                        }
+                    }, null);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
