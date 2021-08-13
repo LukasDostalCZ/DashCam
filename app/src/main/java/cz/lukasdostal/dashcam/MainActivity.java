@@ -87,4 +87,10 @@ public class MainActivity extends AppCompatActivity {
             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
     }
+    private void closeCamera() {
+        if (mCameraDevice != null) {
+            mCameraDevice.close();
+            mCameraDevice.null;
+        }
+    }
 }
