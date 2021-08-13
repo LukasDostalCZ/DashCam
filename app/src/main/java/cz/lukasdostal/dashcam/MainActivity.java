@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
             mCameraDevice = null;
 
         }
-    }
+    };
 
 
     @Override
@@ -77,6 +77,12 @@ public class MainActivity extends AppCompatActivity {
             preview.setSurfaceTextureListener(mSurfaceTextureListener);
         }
     }
+
+    @Override
+    protected void onPause() {
+        closeCamera();
+    }
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -90,7 +96,8 @@ public class MainActivity extends AppCompatActivity {
     private void closeCamera() {
         if (mCameraDevice != null) {
             mCameraDevice.close();
-            mCameraDevice.null;
+            mCameraDevice = null;
+
         }
     }
 }
