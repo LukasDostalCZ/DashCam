@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private TextureView.SurfaceTextureListener mSurfaceTextureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
-            Toast.makeText(getApplicationContext(), "TextureView is available", Toast.LENGTH_SHORT).show();
+            setupCamera(i, i1);
 
         }
 
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         if(preview.isAvailable()) {
-
+            setupCamera(preview.getWidth(), preview.getHeight());
         } else {
             preview.setSurfaceTextureListener(mSurfaceTextureListener);
         }
