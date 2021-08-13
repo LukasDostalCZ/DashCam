@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
     private void startBackgroundThread() {
         mBackgroundHandlerThread = new HandlerThread("DashCam");
         mBackgroundHandlerThread.start();
-        mBackgroundHandlerThread = new Handler(mBackgroundHandlerThread.getLooper());
+        mBackgroundHandler = new Handler(mBackgroundHandlerThread.getLooper());
     }
 
     private void stopBackgroundThread() {
