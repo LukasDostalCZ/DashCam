@@ -8,6 +8,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -288,5 +290,21 @@ public class MainActivity extends AppCompatActivity {
 
     public static int getScreenHeight() {
         return Resources.getSystem().getDisplayMetrics().heightPixels;
+    }
+    private void transformImage(int width, int height) {
+        if(preview == null || mPreviewSize == null) {
+            return;
+        }
+        Matrix matrix = new Matrix();
+        RectF prevRectF = new RectF(0, 0, width, height);
+        RectF prevSizeRectF = new RectF(0, 0, mPreviewSize.getHeight(), mPreviewSize.getWidth());
+        float centerX = prevRectF.centerX();
+        float centerY = prevRectF.centerY();
+        prevSizeRectF.offset(centerX - prevSizeRectF.centerX(), centerY - prevSizeRectF.centerY());
+        matrix.setRectToRect(prevRectF, prevSizeRectF, Matrix.ScaleToFit.FILL);
+        float scale = Math.max((float)width / mPreviewSize.getWidth(), (float)height / mPreviewSize.getHeight());
+        matrix.postScale(scale, scale, centerX, centerY);
+        matrix.postRotate(90, centerX, centerY);
+        preview.setTransform(matrix);
     }
 }
