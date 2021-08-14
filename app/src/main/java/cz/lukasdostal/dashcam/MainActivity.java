@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
             setupCamera(i, i1);
+            transformImage(getScreenWidth(), getScreenHeight());
             connectCamera();
 
         }
@@ -126,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(preview.isAvailable()) {
             setupCamera(getScreenWidth(), getScreenHeight());
+            transformImage(getScreenWidth(), getScreenHeight());
             connectCamera();
         } else {
             preview.setSurfaceTextureListener(mSurfaceTextureListener);
@@ -304,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
         matrix.setRectToRect(prevRectF, prevSizeRectF, Matrix.ScaleToFit.FILL);
         float scale = Math.max((float)width / mPreviewSize.getWidth(), (float)height / mPreviewSize.getHeight());
         matrix.postScale(scale, scale, centerX, centerY);
-        matrix.postRotate(90, centerX, centerY);
+        matrix.postRotate(270, centerX, centerY);
         preview.setTransform(matrix);
     }
 }
