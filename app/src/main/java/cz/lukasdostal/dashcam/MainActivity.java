@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
             setupCamera(i, i1);
-            transformImage(getScreenWidth(), getScreenHeight());
+            transformImage(i, i1);
             connectCamera();
 
         }
