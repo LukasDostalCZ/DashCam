@@ -271,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
     private static Size chooseOptimalSize(Size[] choices, int widht, int height) {
         List<Size> bigEnough = new ArrayList<Size>();
         for(Size option : choices) {
-            if(option.getHeight() == option.getWidth() * height / widht && option.getWidth() >= widht && option.getHeight() >= height) {
+            if(option.getWidth() >= height && option.getWidth() / option.getHeight() == 16 / 9) {
                 bigEnough.add(option);
             }
         }
