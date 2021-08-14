@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -122,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         startBackgroundThread();
 
         if(preview.isAvailable()) {
-            setupCamera(preview.getWidth(), preview.getHeight());
+            setupCamera(getScreenWidth(), getScreenHeight());
             connectCamera();
         } else {
             preview.setSurfaceTextureListener(mSurfaceTextureListener);
@@ -280,5 +281,12 @@ public class MainActivity extends AppCompatActivity {
         } else {
             return choices[0];
         }
+    }
+    public static int getScreenWidth() {
+        return Resources.getSystem().getDisplayMetrics().widthPixels;
+    }
+
+    public static int getScreenHeight() {
+        return Resources.getSystem().getDisplayMetrics().heightPixels;
     }
 }
