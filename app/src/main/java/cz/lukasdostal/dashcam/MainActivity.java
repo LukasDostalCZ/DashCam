@@ -268,40 +268,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startRecord() {
-
         try {
             setupMediaRecorder();
             SurfaceTexture surfaceTexture = preview.getSurfaceTexture();
             surfaceTexture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
             Surface previewSurface = new Surface(surfaceTexture);
             Surface recordSurface = mMediaRecorder.getSurface();
-            try {
-                mCaptureRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
-            } catch (CameraAccessException e) {
-                e.printStackTrace();
-            }
+            mCaptureRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
             mCaptureRequestBuilder.addTarget(previewSurface);
             mCaptureRequestBuilder.addTarget(recordSurface);
-
             mCameraDevice.createCaptureSession(Arrays.asList(previewSurface, recordSurface),
                     new CameraCaptureSession.StateCallback() {
                         @Override
-                        public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
+                        public void onConfigured(CameraCaptureSession session) {
                             try {
-                                cameraCaptureSession.setRepeatingRequest(
-                                        mCaptureRequestBuilder.build(), null, null);
+                                session.setRepeatingRequest(
+                                        mCaptureRequestBuilder.build(), null, null
+                                );
                             } catch (CameraAccessException e) {
                                 e.printStackTrace();
                             }
-
                         }
-
                         @Override
-                        public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-
+                        public void onConfigureFailed(CameraCaptureSession session) {
                         }
                     }, null);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -415,19 +407,21 @@ public class MainActivity extends AppCompatActivity {
         preview.setTransform(matrix);
     }
     private void createVideoFolder() {
-        File movieFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+        File movieFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
         mVideoFolder = new File(movieFile, "dashcam");
-        if(mVideoFolder.exists()) {
+        if(!mVideoFolder.exists()) {
             mVideoFolder.mkdirs();
         }
     }
     private File createVideoFileName() throws IOException {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String prepend = "Záznam_" + timestamp;
+        String prepend = "Záznam" + timestamp;
         File videoFile = File.createTempFile(prepend, ".mp4", mVideoFolder);
         mVideoFileName = videoFile.getAbsolutePath();
         return videoFile;
     }
+
+
 
     private void checkWriteStoragePermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -464,7 +458,7 @@ public class MainActivity extends AppCompatActivity {
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         mMediaRecorder.setOutputFile(mVideoFileName);
-        mMediaRecorder.setVideoEncodingBitRate(1000000);
+        mMediaRecorder.setVideoEncodingBitRate(2000000);
         mMediaRecorder.setVideoFrameRate(30);
         mMediaRecorder.setVideoSize(mVideoSize.getWidth(), mVideoSize.getHeight());
         mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
