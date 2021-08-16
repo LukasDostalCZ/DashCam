@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
                     rotatedWidht = height;
                     rotatedHeight = width;
                 }
-                mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class));
+                mPreviewSize = chooseOptimalSize(map.getOutputSizes(ImageFormat.JPEG));
                 mCameraId = cameraId;
                 return;
             };
@@ -319,13 +319,16 @@ public class MainActivity extends AppCompatActivity {
             if(option.getHeight() == 2160 & option.getWidth() == 3840) {
                 validOptions.add(option);
             }
-            if(option.getHeight() == 2560 & option.getWidth() == 1440) {
+            if(option.getHeight() == 1440 & option.getWidth() == 2560) {
                 validOptions.add(option);
             }
             if(option.getHeight() == 1080 & option.getWidth() == 1920) {
                 validOptions.add(option);
             }
             if(option.getHeight() == 720 & option.getWidth() == 1280) {
+                validOptions.add(option);
+            }
+            if(option.getHeight() == 480 & option.getWidth() == 640) {
                 validOptions.add(option);
             }
         }
