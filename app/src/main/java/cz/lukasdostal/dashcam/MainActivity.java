@@ -26,7 +26,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Size;
-import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
@@ -39,7 +38,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -116,7 +114,8 @@ public class MainActivity extends AppCompatActivity {
     private String mCameraId;
     private Size mPreviewSize;
     private Size mVideoSize;
-    private int mTotalRotation = 270;
+    private int mTotalRotation = 0;
+    private int mBitrate = 2000000;
     private CaptureRequest.Builder mCaptureRequestBuilder;
     private ImageButton mRecordImageButton;
     private boolean mIsRecording = false;
@@ -239,6 +238,8 @@ public class MainActivity extends AppCompatActivity {
                 mPreviewSize = chooseOptimalSize(map.getOutputSizes(ImageFormat.JPEG));
                 mVideoSize = chooseOptimalSize(map.getOutputSizes(MediaRecorder.class));
                 mCameraId = cameraId;
+                int videoHeight = mVideoSize.getHeight();
+                mBitrate = chooseOptimalBitrate(videoHeight);
                 return;
             };
         } catch (CameraAccessException e) {
@@ -458,11 +459,31 @@ public class MainActivity extends AppCompatActivity {
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         mMediaRecorder.setOutputFile(mVideoFileName);
-        mMediaRecorder.setVideoEncodingBitRate(2000000);
+        mMediaRecorder.setVideoEncodingBitRate(mBitrate);
         mMediaRecorder.setVideoFrameRate(30);
         mMediaRecorder.setVideoSize(mVideoSize.getWidth(), mVideoSize.getHeight());
         mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
         mMediaRecorder.setOrientationHint(mTotalRotation);
         mMediaRecorder.prepare();
+    }
+
+    public int chooseOptimalBitrate(int video) {
+        int optimalBitrate = 3000000;
+        if(video == 2160) {
+            optimalBitrate = 15000000;
+        }
+        if(video == 1440) {
+            optimalBitrate = 11000000;
+        }
+        if(video == 1080) {
+            optimalBitrate = 8000000;
+        }
+        if(video == 720) {
+            optimalBitrate = 4000000;
+        }
+        if(video == 480) {
+            optimalBitrate = 1000000;
+        }
+        return optimalBitrate;
     }
 }
