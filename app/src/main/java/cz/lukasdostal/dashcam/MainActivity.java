@@ -312,10 +312,11 @@ public class MainActivity extends AppCompatActivity {
         deviceOrientation = ORIENTATIONS.get(deviceOrientation);
         return (sensorOrientation + deviceOrientation + 360) % 360;
     }
-    private static Size chooseOptimalSize(Size[] choices, int widht, int height) {
+    private static Size chooseOptimalSize(Size[] choices, int width, int height) {
         List<Size> bigEnough = new ArrayList<Size>();
         for(Size option : choices) {
-            if(option.getWidth() >= height && option.getWidth() / option.getHeight() == 16 / 9) {
+            if(option.getHeight() == option.getWidth() * height / width &&
+                    option.getWidth() >= width && option.getHeight() >= height) {
                 bigEnough.add(option);
             }
         }
