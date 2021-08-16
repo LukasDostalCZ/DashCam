@@ -123,6 +123,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        createVideoFolder();
+
         preview = (TextureView) findViewById(R.id.videoPreview);
         mRecordImageButton = (ImageButton) findViewById(R.id.recordVideoButton);
         mRecordImageButton.setOnClickListener(new View.OnClickListener() {
