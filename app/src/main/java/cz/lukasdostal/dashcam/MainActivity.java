@@ -319,6 +319,9 @@ public class MainActivity extends AppCompatActivity {
             if(option.getHeight() == 2160 & option.getWidth() == 3840) {
                 validOptions.add(option);
             }
+            if(option.getHeight() == 2560 & option.getWidth() == 1440) {
+                validOptions.add(option);
+            }
             if(option.getHeight() == 1080 & option.getWidth() == 1920) {
                 validOptions.add(option);
             }
