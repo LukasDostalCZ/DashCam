@@ -46,6 +46,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQEST_CAMERA_PERMISSION_RESULT = 0;
+    private static final int REQEST_WRITE_EXTERNAL_STORAGE_PERMISSION_RESULT = 1;
     private TextureView preview;
     private TextureView.SurfaceTextureListener mSurfaceTextureListener = new TextureView.SurfaceTextureListener() {
         @Override
@@ -137,8 +138,7 @@ public class MainActivity extends AppCompatActivity {
                     mIsRecording = false;
                     mRecordImageButton.setImageResource(R.drawable.record);
                 } else {
-                    mIsRecording = true;
-                    mRecordImageButton.setImageResource(R.drawable.recording);
+                    checkWriteStoragePermission();
                 }
             }
         });
@@ -347,5 +347,32 @@ public class MainActivity extends AppCompatActivity {
         File videoFile = File.createTempFile(prepend, ".mp4", mVideoFolder);
         mVideoFileName = videoFile.getAbsolutePath();
         return videoFile;
+    }
+
+    private void checkWriteStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)  {
+                mIsRecording = true;
+                mRecordImageButton.setImageResource(R.drawable.recording);
+                try {
+                    createVideoFileName();
+                } catch (IOException e) {
+                    e.printStackTrace();
+            }
+            }else {
+                    if(shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        Toast.makeText(this, "Dashcam potřebuje přístup k uložišti pro ukládání nahrávek", Toast.LENGTH_SHORT).show();
+                    }
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQEST_WRITE_EXTERNAL_STORAGE_PERMISSION_RESULT);
+                }
+        } else {
+            mIsRecording = true;
+            mRecordImageButton.setImageResource(R.drawable.recording);
+            try {
+                createVideoFileName();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
