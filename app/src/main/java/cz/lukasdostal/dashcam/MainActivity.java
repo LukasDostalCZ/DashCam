@@ -167,6 +167,20 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Aplikace Dashcam potřebuje služby fotoaparátu", Toast.LENGTH_SHORT).show();
             }
         }
+        if(requestCode == REQEST_WRITE_EXTERNAL_STORAGE_PERMISSION_RESULT) {
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                mIsRecording = true;
+                mRecordImageButton.setImageResource(R.drawable.recording);
+                try {
+                    createVideoFileName();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Toast.makeText(this, "[DEBUG]povolení uděleno", Toast.LENGTH_SHORT).show();
+            } else{
+                Toast.makeText(this, "Aplikace Dashcam potřebuje oprávnění ke svému fungování", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 
