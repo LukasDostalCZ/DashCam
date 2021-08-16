@@ -22,6 +22,7 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -49,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQEST_CAMERA_PERMISSION_RESULT = 0;
     private static final int REQEST_WRITE_EXTERNAL_STORAGE_PERMISSION_RESULT = 1;
     private TextureView preview;
+    private CountDownTimer countDownTimer;
+    private long timeInMiliseconds = 180000; //3minuty
     private TextureView.SurfaceTextureListener mSurfaceTextureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
@@ -155,9 +158,7 @@ public class MainActivity extends AppCompatActivity {
                 if(mIsRecording) {
                     mIsRecording = false;
                     mRecordImageButton.setImageResource(R.drawable.record);
-                    mMediaRecorder.stop();
-                    mMediaRecorder.reset();
-                    startPreview();
+                    stopTimer();
                 } else {
                     checkWriteStoragePermission();
                 }
@@ -431,13 +432,7 @@ public class MainActivity extends AppCompatActivity {
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)  {
                 mIsRecording = true;
                 mRecordImageButton.setImageResource(R.drawable.recording);
-                try {
-                    createVideoFileName();
-                } catch (IOException e) {
-                    e.printStackTrace();
-            }
-                startRecord();
-                mMediaRecorder.start();
+                startTimer();
             } else {
                     if(shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                         Toast.makeText(this, "Dashcam potřebuje přístup k uložišti pro ukládání nahrávek", Toast.LENGTH_SHORT).show();
@@ -447,13 +442,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             mIsRecording = true;
             mRecordImageButton.setImageResource(R.drawable.recording);
-            try {
-                createVideoFileName();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            startRecord();
-            mMediaRecorder.start();
+            startTimer();
         }
     }
 
@@ -487,5 +476,36 @@ public class MainActivity extends AppCompatActivity {
             optimalBitrate = 1000000;
         }
         return optimalBitrate;
+    }
+    public void startTimer() {
+        try {
+            createVideoFileName();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        startRecord();
+        mMediaRecorder.start();
+        countDownTimer = new CountDownTimer(timeInMiliseconds, 1000) {
+
+            @Override
+            public void onTick(long l) {
+
+
+            }
+
+            @Override
+            public void onFinish() {
+                mMediaRecorder.stop();
+                mMediaRecorder.reset();
+                startTimer();
+            }
+        }.start();
+
+    }
+        public void stopTimer() {
+        countDownTimer.cancel();
+        mMediaRecorder.stop();
+        mMediaRecorder.reset();
+        startPreview();
     }
 }
