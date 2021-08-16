@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private TextureView.SurfaceTextureListener mSurfaceTextureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
-            setupCamera(i, i1);
+            setupCamera();
             transformImage(i, i1);
             connectCamera();
 
@@ -195,11 +195,11 @@ public class MainActivity extends AppCompatActivity {
         View decorView = getWindow().getDecorView();
         if(hasFocus) {
             decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN
-            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
+
         if(preview.isAvailable()) {
-            setupCamera(getScreenWidth(), getScreenHeight());
+            setupCamera();
             transformImage(getScreenWidth(), getScreenHeight());
             connectCamera();
         } else {
@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
         startBackgroundThread();
     }
 
-    private void setupCamera(int width, int height) {
+    private void setupCamera() {
         CameraManager cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         try {
             for (String cameraId : cameraManager.getCameraIdList()){
@@ -217,15 +217,6 @@ public class MainActivity extends AppCompatActivity {
                     continue;
                 }
                 StreamConfigurationMap map = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-                int deviceOrientation = getWindowManager().getDefaultDisplay().getRotation();
-                int totalRotation = sensorToDeviceRotation(cameraCharacteristics, deviceOrientation);
-                boolean swapRotation = totalRotation == 90 || totalRotation == 270;
-                int rotatedWidht = width;
-                int rotatedHeight = height;
-                if(swapRotation) {
-                    rotatedWidht = height;
-                    rotatedHeight = width;
-                }
                 mPreviewSize = chooseOptimalSize(map.getOutputSizes(ImageFormat.JPEG));
                 mCameraId = cameraId;
                 return;
