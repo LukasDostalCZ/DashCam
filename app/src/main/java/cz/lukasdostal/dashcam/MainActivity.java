@@ -20,6 +20,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Size;
@@ -31,6 +32,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -98,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
     private CaptureRequest.Builder mCaptureRequestBuilder;
     private ImageButton mRecordImageButton;
     private boolean mIsRecording = false;
+    private File mVideoFolder;
+    private String mVideoFileName;
     private static SparseIntArray ORIENTATIONS = new SparseIntArray();
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 0);
@@ -324,5 +328,12 @@ public class MainActivity extends AppCompatActivity {
         matrix.postScale(scale, scale, centerX, centerY);
         matrix.postRotate(270, centerX, centerY);
         preview.setTransform(matrix);
+    }
+    private void createVideoFolder() {
+        File movieFile = Environment.getExternalStorageDirectory(Environment.DIRECTORY_MOVIES);
+        mVideoFolder = new File(movieFile, "dashcam");
+        if(mVideoFolder.exists()) {
+            mVideoFolder.mkdirs();
+        }
     }
 }
