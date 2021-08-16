@@ -19,6 +19,7 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -98,10 +99,13 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private MediaRecorder mMediaRecorder;
     private HandlerThread mBackgroundHandlerThread;
     private Handler mBackgroundHandler;
     private String mCameraId;
     private Size mPreviewSize;
+    private Size mVideoSize;
+    private int mTotalRotation = 270;
     private CaptureRequest.Builder mCaptureRequestBuilder;
     private ImageButton mRecordImageButton;
     private boolean mIsRecording = false;
@@ -130,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
 
         createVideoFolder();
 
+        mMediaRecorder = new MediaRecorder();
         preview = (TextureView) findViewById(R.id.videoPreview);
         mRecordImageButton = (ImageButton) findViewById(R.id.recordVideoButton);
         mRecordImageButton.setOnClickListener(new View.OnClickListener() {
@@ -218,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 StreamConfigurationMap map = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
                 mPreviewSize = chooseOptimalSize(map.getOutputSizes(ImageFormat.JPEG));
+                mVideoSize = chooseOptimalSize(map.getOutputSizes(MediaRecorder.class));
                 mCameraId = cameraId;
                 return;
             };
