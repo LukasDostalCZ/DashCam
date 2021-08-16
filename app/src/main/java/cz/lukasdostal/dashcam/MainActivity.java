@@ -330,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
         preview.setTransform(matrix);
     }
     private void createVideoFolder() {
-        File movieFile = Environment.getExternalStorageDirectory(Environment.DIRECTORY_MOVIES);
+        File movieFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
         mVideoFolder = new File(movieFile, "dashcam");
         if(mVideoFolder.exists()) {
             mVideoFolder.mkdirs();
