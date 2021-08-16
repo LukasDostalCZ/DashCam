@@ -8,6 +8,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
@@ -222,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
                     rotatedWidht = height;
                     rotatedHeight = width;
                 }
-                mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class), rotatedWidht, rotatedHeight);
+                mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class));
                 mCameraId = cameraId;
                 return;
             };
@@ -312,16 +313,21 @@ public class MainActivity extends AppCompatActivity {
         deviceOrientation = ORIENTATIONS.get(deviceOrientation);
         return (sensorOrientation + deviceOrientation + 360) % 360;
     }
-    private static Size chooseOptimalSize(Size[] choices, int width, int height) {
-        List<Size> bigEnough = new ArrayList<Size>();
+    private static Size chooseOptimalSize(Size[] choices) {
+        List<Size> validOptions = new ArrayList<Size>();
         for(Size option : choices) {
-            if(option.getHeight() == option.getWidth() * height / width &&
-                    option.getWidth() >= width && option.getHeight() >= height) {
-                bigEnough.add(option);
+            if(option.getHeight() == 2160 & option.getWidth() == 3840) {
+                validOptions.add(option);
+            }
+            if(option.getHeight() == 1080 & option.getWidth() == 1920) {
+                validOptions.add(option);
+            }
+            if(option.getHeight() == 720 & option.getWidth() == 1280) {
+                validOptions.add(option);
             }
         }
-        if(bigEnough.size() > 0) {
-            return Collections.min(bigEnough, new CompareSizeByArea());
+        if(validOptions.size() > 0) {
+            return Collections.min(validOptions, new CompareSizeByArea());
         } else {
             return choices[0];
         }
