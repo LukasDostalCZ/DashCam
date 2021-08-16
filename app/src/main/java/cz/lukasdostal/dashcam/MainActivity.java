@@ -80,7 +80,18 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onOpened(@NonNull CameraDevice cameraDevice) {
             mCameraDevice = cameraDevice;
+            if (mIsRecording) {
+                try {
+                    createVideoFileName();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                startRecord();
+                mMediaRecorder.start();
+            } else {
+
             startPreview();
+            }
             Toast.makeText(getApplicationContext(), "fotoaparát připojen", Toast.LENGTH_SHORT).show();
         }
 
@@ -143,6 +154,9 @@ public class MainActivity extends AppCompatActivity {
                 if(mIsRecording) {
                     mIsRecording = false;
                     mRecordImageButton.setImageResource(R.drawable.record);
+                    mMediaRecorder.stop();
+                    mMediaRecorder.reset();
+                    startPreview();
                 } else {
                     checkWriteStoragePermission();
                 }
@@ -249,6 +263,45 @@ public class MainActivity extends AppCompatActivity {
                 cameraManager.openCamera(mCameraId, mCameraDeviceStateCallback, mBackgroundHandler);
             }
         } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void startRecord() {
+
+        try {
+            setupMediaRecorder();
+            SurfaceTexture surfaceTexture = preview.getSurfaceTexture();
+            surfaceTexture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
+            Surface previewSurface = new Surface(surfaceTexture);
+            Surface recordSurface = mMediaRecorder.getSurface();
+            try {
+                mCaptureRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
+            mCaptureRequestBuilder.addTarget(previewSurface);
+            mCaptureRequestBuilder.addTarget(recordSurface);
+
+            mCameraDevice.createCaptureSession(Arrays.asList(previewSurface, recordSurface),
+                    new CameraCaptureSession.StateCallback() {
+                        @Override
+                        public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
+                            try {
+                                cameraCaptureSession.setRepeatingRequest(
+                                        mCaptureRequestBuilder.build(), null, null);
+                            } catch (CameraAccessException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+
+                        @Override
+                        public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
+
+                        }
+                    }, null);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -386,7 +439,9 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
             }
-            }else {
+                startRecord();
+                mMediaRecorder.start();
+            } else {
                     if(shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                         Toast.makeText(this, "Dashcam potřebuje přístup k uložišti pro ukládání nahrávek", Toast.LENGTH_SHORT).show();
                     }
@@ -400,6 +455,8 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            startRecord();
+            mMediaRecorder.start();
         }
     }
 
